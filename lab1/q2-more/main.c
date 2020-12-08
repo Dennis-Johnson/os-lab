@@ -34,7 +34,9 @@ int main(int argc, char* argv[]){
     size_t len_read;
 
     printf("%s contents:\n", argv[i]);
-    while((len_read = read(in, &ch, sizeof(ch))) > 0){
+    while((len_read = read(in, &ch, sizeof(char))) > 0){
+      putchar((char)ch)dd;
+      /*
       if(ch == '\n'){
         buffer[char_count] = '\0';
         printf("%s\n", buffer);
@@ -48,7 +50,7 @@ int main(int argc, char* argv[]){
           printf("\n---------------------Press Enter to continue or q to stop--------------------");
           char ch = getchar();
 
-          if(ch == '\r')
+          if(ch == '\n')
             continue;
           else if (ch == 'q')
             break;
@@ -57,8 +59,11 @@ int main(int argc, char* argv[]){
       else {
         buffer[char_count++] = ch;  
       }
+      */
     }
     
     printf("End of file\n");
   }
+
+  close(in);
 }
