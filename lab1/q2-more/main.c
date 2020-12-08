@@ -1,6 +1,10 @@
-#include<stdio.h>
-#include<stdlib.h>
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 /* List the lines in the files given as arguments
  * Pause for user confimation every STEP number of lines
  * similar to the more cmd line utility
@@ -15,38 +19,46 @@ int main(int argc, char* argv[]){
     exit(EXIT_FAILURE);
   }
 
-  FILE *fin;
+  int in;
   char buffer[LEN_BUFFER];
-
+  
   for(int i = 1; i < argc; i++){
     
-    fin = fopen(argv[i], "r");
-    if(fin == NULL){
+    if((in = open(argv[i], O_RDONLY)) < 0){
       fprintf(stderr, "Error opening file %s", argv[i]);
       perror(" ");
       continue;
     }
     
-    int line_count = 0;
+    int ch, char_count = 0, line_count = 0;
+    size_t len_read;
 
     printf("%s contents:\n", argv[i]);
-    while(fgets(buffer, LEN_BUFFER, fin) != NULL){
-      line_count++;
-      printf("%s", buffer);
-      
-      //Pause for user prompt to continue
-      if(line_count == STEP){
-        printf("\n---------------------Press Enter to continue or q to stop--------------------");
-        char ch = getchar();
+    while((len_read = read(in, &ch, sizeof(ch))) > 0){
+      if(ch == '\n'){
+        buffer[char_count] = '\0';
+        printf("%s\n", buffer);
 
-        if(ch == '\r')
-          continue;
-        else if (ch == 'q')
-          break;
+        //memset(buffer, '\0', LEN_BUFFER);
+        char_count = 0;
+        line_count++;
+        
+        //Pause for user prompt to continue
+        if(line_count == STEP){
+          printf("\n---------------------Press Enter to continue or q to stop--------------------");
+          char ch = getchar();
+
+          if(ch == '\r')
+            continue;
+          else if (ch == 'q')
+            break;
+        }
+      }
+      else {
+        buffer[char_count++] = ch;  
       }
     }
     
     printf("End of file\n");
-    fclose(fin);
   }
 }
