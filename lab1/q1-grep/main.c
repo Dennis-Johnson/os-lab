@@ -24,5 +24,6 @@ int main(int argc, char* argv[]){
     printf("Found '%s': line --> %s", argv[1], buffer);
   }
 
+  fclose(fin);
 	return 0;
 }
