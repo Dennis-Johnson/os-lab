@@ -1,8 +1,7 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<sys/types.h>
-#include<sys/stats.h>
-#include<fctnl.h>
+#include<fcntl.h>
 #include<string.h>
 #include<stdlib.h>
 
@@ -26,18 +25,23 @@ int main(int argc, char* argv[]){
     exit(EXIT_FAILURE);
   }
   
-  size_t len_read;
+  size_t len_read, char_count = 0;
   while((len_read = read(in, &ch, sizeof(char))) > 0){
     if (ch == '\n'){
-      //Do stuff
+      buffer[char_count] = '\0';
+      
+      if(strstr(buffer, argv[1]) != NULL)
+        printf("Found '%s': line --> %s", argv[1], buffer);
+      
+      char_count = 0;
+      memset(buffer, '\0', sizeof(buffer));
+    } 
+
+    else {
+      buffer[char_count++] = ch;
     }
-    buffer[char_count++] = ch;
-    if(strstr(buffer, argv[1]) == NULL)
-      continue;
-    
-    printf("Found '%s': line --> %s", argv[1], buffer);
   }
 
-  fclose(fin);
+  close(in);
 	return 0;
 }
