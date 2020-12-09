@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
     exit(EXIT_FAILURE);
   }
   
-  if ((out = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, S_IWUSR | S_IXOTH)) < 0){
+  if ((out = open(argv[2], O_WRONLY | O_CREAT, S_IWUSR | S_IXOTH)) < 0){
     fprintf(stderr, "Error opening dst file %s", argv[2]);
     perror(" ");
     exit(EXIT_FAILURE);

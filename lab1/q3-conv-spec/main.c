@@ -4,7 +4,7 @@
 #include<stdlib.h>
 #include<fcntl.h>
 #include<sys/types.h>
-#include<sys/stat.h>
+
 int main()
 {
 	printf("%d \n",0xf);
@@ -15,5 +15,6 @@ int main()
 	printf("%#x\n",1 );
 	open("hel",O_RDONLY);
 	fprintf(stderr,"%m\n");
-	
+  
+  return 0;	
 } 
