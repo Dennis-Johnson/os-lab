@@ -1,10 +1,10 @@
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include <fcntl.h>
 /* List the lines in the files given as arguments
  * Pause for user confimation every STEP number of lines
  * similar to the more cmd line utility
@@ -29,41 +29,42 @@ int main(int argc, char* argv[]){
       perror(" ");
       continue;
     }
+    else printf("'%s' contents:\n", argv[i]);
     
-    int ch, char_count = 0, line_count = 0;
-    size_t len_read;
+    char ch;
+    int line_count = 0;
+    size_t len_read, char_count = 0;
 
-    printf("%s contents:\n", argv[i]);
+    
     while((len_read = read(in, &ch, sizeof(char))) > 0){
-      putchar((char)ch)dd;
-      /*
       if(ch == '\n'){
         buffer[char_count] = '\0';
-        printf("%s\n", buffer);
+        printf("%d  %s\n", line_count, buffer);
 
-        //memset(buffer, '\0', LEN_BUFFER);
         char_count = 0;
         line_count++;
         
         //Pause for user prompt to continue
-        if(line_count == STEP){
+        if(line_count % STEP == 0){
           printf("\n---------------------Press Enter to continue or q to stop--------------------");
           char ch = getchar();
 
-          if(ch == '\n')
+          if(ch == '\r')
             continue;
           else if (ch == 'q')
             break;
         }
+        memset(buffer, '\0', sizeof(buffer));
       }
       else {
         buffer[char_count++] = ch;  
       }
-      */
-    }
-    
+    } 
+
+    line_count = 0;
+    char_count = 0;
+    close(in);
     printf("End of file\n");
   }
 
-  close(in);
 }
