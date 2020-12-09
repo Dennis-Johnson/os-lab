@@ -7,20 +7,19 @@
 
 #define LEN_BUFFER 256
 /*
- * Search for a word in file given as cmd line ard
- * Similar to grep for a single file
+ * Similar to Lab1/Q1 grep tool
+   Here we look for Packages in /var/lib/dpkg/status file
  * */
 
-int main(int argc, char* argv[]){
+int main(){
   int in;
   char ch, buffer[LEN_BUFFER];
-
-  if(argc != 3){
-    fprintf(stderr, "Usage: arg1 - word, arg2 - file src to search in");  
-  }
   
-  if((in = open(argv[2], O_RDONLY)) < 0){
-    fprintf(stderr, "Error opening file %s", argv[2]);
+  char *path = "/var/lib/dpkg/status";
+  char *key  = "Package";
+
+  if((in = open(path, O_RDONLY)) < 0){
+    fprintf(stderr, "Error opening file %s", path);
     perror(" ");
     exit(EXIT_FAILURE);
   }
@@ -30,8 +29,8 @@ int main(int argc, char* argv[]){
     if (ch == '\n'){
       buffer[char_count] = '\0';
       
-      if(strstr(buffer, argv[1]) != NULL)
-        printf("Found '%s': line --> %s\n", argv[1], buffer);
+      if(strstr(buffer, key) != NULL)
+        printf("Found '%s': line --> %s\n", key, buffer);
       
       char_count = 0;
       memset(buffer, '\0', sizeof(buffer));

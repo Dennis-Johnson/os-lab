@@ -1,45 +1,41 @@
-#include<stdio.h>
-#include<unistd.h>
-#include<sys/types.h>
-#include<fcntl.h>
-#include<string.h>
-#include<stdlib.h>
+#include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <dirent.h>
 
 #define LEN_BUFFER 256
 /*
- * Similar to Lab1/Q1 grep tool
-   Here we look for Packages in /var/lib/dpkg/status file
- * */
-int main(){
-  int in;
-  char ch, buffer[LEN_BUFFER];
-  
-  char *path = "/var/lib/dpkg/status";
-  char *key  = "Package";
+ Program to list all installed Applications
+*/
 
-  if((in = open(path, O_RDONLY)) < 0){
-    fprintf(stderr, "Error opening file %s", path);
+void displayFile(struct dirent* entry, struct stat stat_buff);
+
+int main(){
+  //Path to Apps folder, here I'm using OS X
+  char* path = "/Applications";
+  int appCount = 0;
+  DIR* dp;
+  struct dirent* entry;
+
+  if((dp = opendir(path)) == NULL){
+    fprintf(stderr, "Could not open directory %s", path);
     perror(" ");
     exit(EXIT_FAILURE);
   }
-  
-  size_t len_read, char_count = 0;
-  while((len_read = read(in, &ch, sizeof(char))) > 0){
-    if (ch == '\n'){
-      buffer[char_count] = '\0';
-      
-      if(strstr(buffer, key) != NULL)
-        printf("Found '%s': line --> %s\n", key, buffer);
-      
-      char_count = 0;
-      memset(buffer, '\0', sizeof(buffer));
-    } 
+ 
+  while((entry = readdir(dp)) != NULL){
+    appCount ++;
+    //Skip printing info of . and .. dirs
+    if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      continue;
 
-    else {
-      buffer[char_count++] = ch;
-    }
+    // Print Application names
+    printf("Application #%d --> %s\n", appCount, entry->d_name);
   }
 
-  close(in);
-	return 0;
+  closedir(dp);
+  return 0;
 }
+

@@ -7,14 +7,11 @@
 
 int main()
 {
-	printf("%d \n",0xf);
-	printf("%s\n","hello" );
-	printf("%e\n",3.14);
-	printf("%o\n",12);
-	printf("%f\n",0.1 );
-	printf("%#x\n",1 );
-	open("hel",O_RDONLY);
-	fprintf(stderr,"%m\n");
-  
+	printf("Hex to signed integer %d\n", 0xa);
+	printf("char to signed int %d\n", 'b');
+	printf("Strings %s\n", "Strings!");
+	printf("Floating point (exponential) %e\n", 3.14);
+	printf("Unsigned octal %o\n", 12);
+	printf("Floating point %f\n", 0.1 );
   return 0;	
 } 

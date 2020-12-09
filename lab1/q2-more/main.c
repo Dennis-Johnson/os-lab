@@ -29,7 +29,7 @@ int main(int argc, char* argv[]){
       perror(" ");
       continue;
     }
-    else printf("'%s' contents:\n", argv[i]);
+    else printf("\n'%s' contents:\n", argv[i]);
     
     char ch;
     int line_count = 0;
