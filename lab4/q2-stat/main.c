@@ -27,9 +27,9 @@ int main(int argc, char* argv[]){
     off_t size = f_stat.st_size;
     blksize_t blksize = f_stat.st_blksize;
     blkcnt_t blcnt = f_stat.st_blocks;
-    struct timespec atim = f_stat.st_atim;
-    struct timespec mtim = f_stat.st_mtim;
-    struct timespec ctim = f_stat.st_ctim;
+    __darwin_time_t atim = f_stat.st_atimespec.tv_sec;
+    __darwin_time_t mtim = f_stat.st_mtimespec.tv_sec;
+    __darwin_time_t ctim = f_stat.st_ctimespec.tv_sec;
 
     printf("%-12s %li\n", "Device ID", dev_id);
     printf("%-12s %li\n", "Inode", inode);
@@ -41,7 +41,9 @@ int main(int argc, char* argv[]){
     printf("%-12s %li\n", "Size", size);
     printf("%-12s %li\n", "BlockSize", blksize);
     printf("%-12s %li\n", "BlockCount", blcnt);
-    printf("%-12s %s\n", "Time accessed", ctime(atim.tv_sec));
+    printf("%-12s %s\n", "Time accessed", ctime(&atim));
+    printf("%-12s %s\n", "Time modified", ctime(&mtim));
+    printf("%-12s %s\n", "Time changed", ctime(&ctim));
     
     return 0;
 }
