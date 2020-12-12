@@ -15,6 +15,9 @@ int main(){
     exit(EXIT_SUCCESS);
   }
   else {
+    printf("PID of child  is %d\n", ret);
+    printf("PID of parent is %d\n", getpid());
+
     sleep(5);
     char* args[] = {"ps", NULL};
     execl("/bin/ps", args);
