@@ -1,4 +1,4 @@
-cc = gcc
+cc = clang
 flags = -pedantic -Wall
 
 all: main
