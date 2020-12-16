@@ -10,25 +10,28 @@
  Program to list all installed Applications
 */
 
-void displayFile(struct dirent* entry, struct stat stat_buff);
+void displayFile(struct dirent *entry, struct stat stat_buff);
 
-int main(){
-  //Path to Apps folder, here I'm using OS X
-  char* path = "/Applications";
+int main()
+{
+  //Path to Apps folder, here I'm using OSX
+  char *path = "/Applications";
   int appCount = 0;
-  DIR* dp;
-  struct dirent* entry;
+  DIR *dp;
+  struct dirent *entry;
 
-  if((dp = opendir(path)) == NULL){
+  if ((dp = opendir(path)) == NULL)
+  {
     fprintf(stderr, "Could not open directory %s", path);
     perror(" ");
     exit(EXIT_FAILURE);
   }
- 
-  while((entry = readdir(dp)) != NULL){
-    appCount ++;
+
+  while ((entry = readdir(dp)) != NULL)
+  {
+    appCount++;
     //Skip printing info of . and .. dirs
-    if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+    if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
       continue;
 
     // Print Application names
@@ -38,4 +41,3 @@ int main(){
   closedir(dp);
   return 0;
 }
-
