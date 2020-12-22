@@ -2,23 +2,26 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-typedef struct P_Args {
+typedef struct P_Args
+{
   int a, b;
 } P_Args;
 
-void *computeSum(void *param){
-   P_Args *pa = param;
-   int sum = pa->a + pa->b;
-   return (void*) sum;
+void *computeSum(void *param)
+{
+  P_Args *pa = param;
+  int sum = pa->a + pa->b;
+  return (void *)sum;
 }
 
-int main(){
+int main()
+{
   P_Args args;
   int ret_val = 0;
 
   printf("Enter two non-negative integers: ");
   scanf("%d %d", &(args.a), &(args.b));
-  
+
   pthread_t adder;
   pthread_create(&adder, 0, &computeSum, (void *)&args);
 
@@ -27,4 +30,3 @@ int main(){
 
   return 0;
 }
-
