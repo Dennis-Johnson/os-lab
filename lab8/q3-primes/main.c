@@ -3,48 +3,62 @@
 #include <pthread.h>
 #include <math.h>
 #define MAX_SIZE 256
-typedef struct PrimeStruct
-{
-    int m;
-    int n;
-    int prime_count;
-    int primes[MAX_SIZE];
-} PrimeStruct;
 
-void *generate_primes(void *param)
+int arr[MAX_SIZE];
+int arr_ind = 0;
+
+typedef struct PrimeArgs
 {
-    PrimeStruct *parameter = (PrimeStruct *)param;
-    for (int i = parameter->m; i <= parameter->n; i++)
+    int low;
+    int high;
+} PrimeArgs;
+
+void *genPrimes(void *param)
+{
+    PrimeArgs pa = *(PrimeArgs *)param;
+
+    for (int i = pa.low; i <= pa.high; i++)
     {
-        int root = sqrt(i);
-        int j;
-        for (j = 2; j <= root; j++)
+        if (i < 2)
+            continue;
+
+        int flag = 0;
+        for (int j = 2; j <= sqrt(i); j++)
         {
             if (i % j == 0)
+            {
+                flag = 1;
                 break;
+            }
         }
-        if (j == root + 1)
+
+        if (!flag)
         {
-            parameter->primes[parameter->prime_count] = i;
-            parameter->prime_count += 1;
+            // Add prime number to list
+            arr[arr_ind++] = i;
         }
     }
-    return NULL;
+
+    pthread_exit(NULL);
 }
-int main(int argc, char const *argv[])
+int main()
 {
-    PrimeStruct p;
-    printf("Enter range : ");
-    scanf("%d %d", &(p.m), &(p.n));
+    pthread_t prime_thread;
+    int low, high;
 
-    p.prime_count = 0;
-    pthread_t thread;
-    pthread_create(&thread, 0, &generate_primes, (void *)&p);
-    pthread_join(thread, NULL);
+    printf("Enter range for primes : ");
+    scanf("%d %d", &low, &high);
 
-    for (int i = 0; i < p.prime_count; i++)
-        printf("%d\n", p.primes[i]);
+    PrimeArgs pa = {low, high};
 
+    pthread_create(&prime_thread, NULL, genPrimes, &pa);
+    pthread_join(prime_thread, NULL);
+
+    for (int i = 0; i < arr_ind; i++)
+    {
+        printf("%d ", arr[i]);
+    }
     printf("\n");
+
     return 0;
 }
