@@ -1,50 +1,40 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <stdlib.h>
+#include "common.h"
 
-#define FIFO_NAME "/tmp/pcp_fifo"
-#define LEN_ARRAY 4
-int array[LEN_ARRAY] = {12,24,36,48};
+//Producer
+int main()
+{
+	int fd;
+	int arr[LEN_ARR] = {1, 2, 3, 4, 5};
 
-
-int main(){
-	int pipe_fd, res;
-	int arr_index = 0;
-	
-	if(access(FIFO_NAME,F_OK) == -1){
-		res = mkfifo(FIFO_NAME, 0777);
-		if( res != 0 ){
-			fprintf(stderr, "Could not create FIFO %s\n", FIFO_NAME);
+	if (access(FIFO_PATH, F_OK) == -1)
+	{
+		if (mkfifo(FIFO_PATH, 0777) == -1)
+		{
+			perror("FIFO creation error: ");
 			exit(EXIT_FAILURE);
 		}
 	}
+	else
+		printf("Producer started PID: %u\n", getpid());
 
-	printf("Process %d opening FIFO\n", getpid());
-	pipe_fd = open(FIFO_NAME, O_WRONLY);
-	printf("Process %d opened FIFO with fd %d\n", getpid(), pipe_fd);
-
-	if(pipe_fd == -1){
-		perror(" ");
+	if ((fd = open(FIFO_PATH, O_WRONLY)) == -1)
+	{
+		perror("Open for write error: ");
 		exit(EXIT_FAILURE);
 	}
 
-	while(arr_index < 4){
-		res = write(pipe_fd, array + arr_index, sizeof(int));
-		if(res == -1){
-			perror("Write error on pipe: ");
+	for (int i = 0; i < LEN_ARR; i++)
+	{
+		ssize_t len_wr = write(fd, &arr[i], sizeof(int));
+		printf("Producer wrote %d\n", arr[i]);
+
+		if (len_wr == -1)
+		{
+			perror("Write error: ");
 			exit(EXIT_FAILURE);
 		}
-
-		arr_index++;
 	}
 
-	close(pipe_fd);
-	printf("Process %d is done.\n", getpid());
-	
+	close(fd);
 	return 0;
 }

@@ -1,37 +1,39 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <stdlib.h>
+#include "common.h"
 
-#define FIFO_NAME "/tmp/pcp_fifo"
-
+//Reader
 int main()
 {
-	int pipe_fd, res;
-	int n = 0;
+	int fd;
+	int arr[LEN_ARR];
 
-	printf("Process %d opening FIFO to read\n", getpid());
-	pipe_fd = open(FIFO_NAME, O_RDONLY);
-	printf("Process %d result %d\n", getpid(), pipe_fd);
-
-	if (pipe_fd == -1)
+	if (access(FIFO_PATH, F_OK) == -1)
 	{
-		perror(" ");
+		// Can't access the pipe
+		perror("Can't access the FIFO: ");
 		exit(EXIT_FAILURE);
 	}
 
-	do
+	if ((fd = open(FIFO_PATH, O_RDONLY)) == -1)
 	{
-		res = read(pipe_fd, &n, sizeof(int));
-		printf("Read int %d from FIFO_Q\n", n);
-	} while (res > 0);
+		perror("Open for read error: ");
+		exit(EXIT_FAILURE);
+	}
 
-	close(pipe_fd);
-	printf("Process %d is done.\n", getpid());
+	for (int i = 0; i < LEN_ARR; i++)
+	{
+		ssize_t len_read = read(fd, arr + i, sizeof(int));
+		if (len_read == -1)
+		{
+			perror("Read error: ");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	for (int i = 0; i < LEN_ARR; i++)
+	{
+		printf("Received %d\n", arr[i]);
+	}
+	close(fd);
 
 	return 0;
 }
